@@ -17,9 +17,8 @@ namespace IntegrateADFSBuiltIn.Controllers
     // this is the web version of the mobile version in:
     // https://docs.microsoft.com/en-us/azure/app-service-mobile/app-service-mobile-dotnet-backend-how-to-use-server-sdk#custom-auth
 
-    [Route("api/[controller]")]
     [ApiController]
-    public class LoginController : ControllerBase
+    public class LoginController : Controller
     {
         public IConfiguration _config;
 
@@ -29,47 +28,17 @@ namespace IntegrateADFSBuiltIn.Controllers
         }
 
         [HttpPost]
+        [Route("/.auth/login/custom")]
+        //public IActionResult Login([FromBody] JObject assertion)
         public IActionResult Login([FromBody] JObject assertion)
         {
-            IActionResult response = Unauthorized();
-            var user = ValidateUser(assertion);
+            var headers = string.Join("<br>",
+                Request.Headers.Keys.Select(
+                    key => string.Format($"<b>Key:</b>{key}, <b>Value:</b>{Request.Headers[key]}")
+            ));
+            ViewBag.Headers = headers;
 
-            if (user != null)
-            {
-                var tokenString = GenerateJWT(user);
-                response = Ok(new { token = tokenString });
-            }
-
-            return response;
-        }
-
-        private object GenerateJWT(User user)
-        {
-            var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
-            var credentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
-
-            IdentityModelEventSource.ShowPII = true;
-
-            var token = new JwtSecurityToken(_config["Jwt:Issuer"],
-                _config["Jwt:Issuer"],
-                null,
-                expires: DateTime.Now.AddDays(1),
-                signingCredentials: credentials);
-
-            return new JwtSecurityTokenHandler().WriteToken(token);
-        }
-
-        private User ValidateUser(JObject assertion)
-        {
-            User user = null;
-
-            // hardcoded for testing purposes
-            if (assertion["username"].ToString() == "ADFSUser")
-            {
-                user = new User() { Id = 1, UserName = "ADFSUser" };
-            }
-
-            return user;
+            return View();
         }
     }
 }
