@@ -17,7 +17,7 @@ namespace IntegrateADFSBuiltIn.Controllers
     // this is the web version of the mobile version in:
     // https://docs.microsoft.com/en-us/azure/app-service-mobile/app-service-mobile-dotnet-backend-how-to-use-server-sdk#custom-auth
 
-    [ApiController]
+    //[ApiController]
     public class LoginController : Controller
     {
         public IConfiguration _config;
@@ -27,8 +27,8 @@ namespace IntegrateADFSBuiltIn.Controllers
             _config = config;
         }
 
-        [HttpPost]
-        [Route("/.auth/login/custom")]
+        //[HttpPost]
+        //Route login/login
         //public IActionResult Login([FromBody] JObject assertion)
         public IActionResult Login([FromBody] JObject assertion)
         {
