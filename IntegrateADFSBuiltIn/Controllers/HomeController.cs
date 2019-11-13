@@ -13,5 +13,11 @@ namespace IntegrateADFSBuiltIn.Controllers
         {
             return View();
         }
+
+        [Authorize]
+        public IActionResult Index2()
+        {
+            return View("Index");
+        }
     }
 }
